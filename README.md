@@ -11,7 +11,6 @@ None.unwrapOr('baloon') // "baloon"
 
 ### `Option<T>`
 
-#### [Full documentation](lib/option)
 
 ```typescript
 import { Option, Some, None } from "https://pax.deno.dev/TheSacredLipton/deno-monads";
@@ -38,7 +37,6 @@ console.log(message); // "Result: 0.6666666666666666"
 
 ### `Result<T, E>`
 
-#### [Full documentation](lib/result)
 
 ```typescript
 import { Result, Ok, Err } from "https://pax.deno.dev/TheSacredLipton/deno-monads";
@@ -74,10 +72,6 @@ const getLabel = (uncertainDate: Either<Date, string>): string => {
   });
 };
 ```
-
-## API Docs
-
-[Full API Documentation](docs/README.md).
 
 ## License
 
