@@ -1,42 +1,12 @@
+import type { MatchO, Option, OptNone, OptSome } from "./types.ts";
+
 export const OptionType = {
-  Some: Symbol(':some'),
-  None: Symbol(':none'),
+  Some: Symbol(":some"),
+  None: Symbol(":none"),
 };
 
-export interface Match<T, U> {
-  some: (val: T) => U;
-  none: (() => U) | U;
-}
-
-export interface Option<T> {
-  type: symbol;
-  isSome(): boolean;
-  isNone(): boolean;
-  match<U>(fn: Match<T, U>): U;
-  map<U>(fn: (val: T) => U): Option<U>;
-  andThen<U>(fn: (val: T) => Option<U>): Option<U>;
-  or<U>(optb: Option<U>): Option<T | U>;
-  and<U>(optb: Option<U>): Option<U>;
-  unwrapOr(def: T): T;
-  unwrap(): T | never;
-}
-
-export interface OptSome<T> extends Option<T> {
-  unwrap(): T;
-  map<U>(fn: (val: T) => U): OptSome<U>;
-  or<U>(optb: Option<U>): Option<T>;
-  and<U>(optb: Option<U>): Option<U>;
-}
-
-export interface OptNone<T> extends Option<T> {
-  unwrap(): never;
-  map<U>(fn: (val: T) => U): OptNone<U>;
-  or<U>(optb: Option<U>): Option<U>;
-  and<U>(optb: Option<U>): OptNone<U>;
-}
-
 export function Some<T>(val?: T | undefined): Option<T> {
-  return typeof val === 'undefined'
+  return typeof val === "undefined"
     ? none_constructor<T>()
     : some_constructor<T>(val as T);
 }
@@ -52,7 +22,7 @@ function some_constructor<T>(val: T): OptSome<T> {
     isNone(): boolean {
       return false;
     },
-    match<U>(fn: Match<T, U>): U {
+    match<U>(fn: MatchO<T, U>): U {
       return fn.some(val);
     },
     map<U>(fn: (val: T) => U): OptSome<U> {
@@ -85,10 +55,10 @@ function none_constructor<T>(): OptNone<T> {
     isNone(): boolean {
       return true;
     },
-    match<U>(matchObject: Match<T, U>): U {
+    match<U>(matchObject: MatchO<T, U>): U {
       const { none } = matchObject;
 
-      if (typeof none === 'function') {
+      if (typeof none === "function") {
         return (none as () => U)();
       }
 
@@ -108,13 +78,13 @@ function none_constructor<T>(): OptNone<T> {
     },
     unwrapOr(def: T): T {
       if (def == null) {
-        throw new Error('Cannot call unwrapOr with a missing value.');
+        throw new Error("Cannot call unwrapOr with a missing value.");
       }
 
       return def;
     },
     unwrap(): never {
-      throw new ReferenceError('Trying to unwrap None.');
+      throw new ReferenceError("Trying to unwrap None.");
     },
   };
 }

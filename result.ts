@@ -1,55 +1,10 @@
-import { None, Option, OptNone, Some } from "./option.ts";
+import { None, Some } from "./option.ts";
+import { MatchR, Option, OptNone, ResErr, ResOk, Result } from "./types.ts";
 
 export const ResultType = {
   Ok: Symbol(":ok"),
   Err: Symbol(":err"),
 };
-
-export interface Match<T, E, U> {
-  ok: (val: T) => U;
-  err: (val: E) => U;
-}
-
-export interface Result<T, E> {
-  type: symbol;
-  isOk(): boolean;
-  isErr(): boolean;
-  ok(): Option<T>;
-  err(): Option<E>;
-  unwrap(): T | never;
-  unwrapOr(optb: T): T;
-  unwrapOrElse(fn: (err: E) => T): T;
-  unwrapErr(): E | never;
-  match<U>(fn: Match<T, E, U>): U;
-  map<U>(fn: (val: T) => U): Result<U, E>;
-  mapErr<U>(fn: (err: E) => U): Result<T, U>;
-  andThen<U>(fn: (val: T) => Result<U, E>): Result<U, E>;
-  orElse<U>(fn: (err: E) => Result<U, E>): Result<T, E> | Result<U, E>;
-}
-
-export interface ResOk<T, E = never> extends Result<T, E> {
-  unwrap(): T;
-  unwrapOr(optb: T): T;
-  unwrapOrElse(fn: (err: E) => T): T;
-  unwrapErr(): never;
-  match<U>(fn: Match<T, never, U>): U;
-  map<U>(fn: (val: T) => U): ResOk<U, never>;
-  mapErr<U>(fn: (err: E) => U): ResOk<T, never>;
-  andThen<U>(fn: (val: T) => Result<U, E>): Result<U, E>;
-  orElse<U>(fn: (err: E) => Result<U, E>): Result<T, E>;
-}
-
-export interface ResErr<T, E> extends Result<T, E> {
-  unwrap(): never;
-  unwrapOr(optb: T): T;
-  unwrapOrElse(fn: (err: E) => T): T;
-  unwrapErr(): E;
-  match<U>(fn: Match<never, E, U>): U;
-  map<U>(fn: (val: T) => U): ResErr<never, E>;
-  mapErr<U>(fn: (err: E) => U): ResErr<never, U>;
-  andThen<U>(fn: (val: T) => Result<U, E>): ResErr<never, E>;
-  orElse<U>(fn: (err: E) => Result<U, E>): Result<U, E>;
-}
 
 export function Ok<T, E = never>(val: T): ResOk<T, E> {
   return {
@@ -78,7 +33,7 @@ export function Ok<T, E = never>(val: T): ResOk<T, E> {
     unwrapErr(): never {
       throw new ReferenceError("Cannot unwrap Err value of Result.Ok");
     },
-    match<U>(matchObject: Match<T, never, U>): U {
+    match<U>(matchObject: MatchR<T, never, U>): U {
       return matchObject.ok(val);
     },
     map<U>(fn: (val: T) => U): ResOk<U, never> {
@@ -123,7 +78,7 @@ export function Err<T, E>(err: E): ResErr<T, E> {
     unwrapErr(): E {
       return err;
     },
-    match<U>(matchObject: Match<never, E, U>): U {
+    match<U>(matchObject: MatchR<never, E, U>): U {
       return matchObject.err(err);
     },
     map<U>(_fn: (_val: T) => U): ResErr<never, E> {

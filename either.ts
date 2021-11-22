@@ -1,55 +1,10 @@
-import { None, Option, OptNone, Some } from "./option.ts";
+import { None, Some } from "./option.ts";
+import { Either, MatchE, Option, OptNone, ResLeft, ResRight } from "./types.ts";
 
 export const EitherType = {
   Left: Symbol(":left"),
   Right: Symbol(":right"),
 };
-
-export interface Match<L, R, U> {
-  left: (val: L) => U;
-  right: (val: R) => U;
-}
-
-export interface Either<L, R> {
-  type: symbol;
-  isLeft(): boolean;
-  isRight(): boolean;
-  left(): Option<L>;
-  leftAndThen<U>(fn: (val: L) => Either<U, R>): Either<U, R>;
-  right(): Option<R>;
-  rightAndThen<U>(fn: (val: R) => Either<L, U>): Either<L, U>;
-  unwrap(): L | R;
-  unwrapLeft(): L | never;
-  unwrapLeftOr(other: L): L;
-  unwrapLeftOrElse(fn: (right: R) => L): L;
-  unwrapRight(): R | never;
-  unwrapRightOr(other: R): R;
-  unwrapRightOrElse(fn: (left: L) => R): R;
-  match<U>(fn: Match<L, R, U>): U;
-  map<U>(fn: (val: L | R) => U): Either<U, U>;
-  mapLeft<U>(fn: (left: L) => U): Either<U, R>;
-  mapRight<U>(fn: (right: R) => U): Either<L, U>;
-}
-
-export interface ResLeft<L, R> extends Either<L, R> {
-  unwrap(): L;
-  unwrapLeft(): L;
-  unwrapRight(): never;
-  match<U>(fn: Match<L, never, U>): U;
-  map<U>(fn: (val: L) => U): ResLeft<U, never>;
-  mapLeft<U>(fn: (left: L) => U): Either<U, never>;
-  mapRight<U>(fn: (right: R) => U): ResLeft<L, never>;
-}
-
-export interface ResRight<L, R> extends Either<L, R> {
-  unwrap(): R;
-  unwrapLeft(): never;
-  unwrapRight(): R;
-  match<U>(fn: Match<never, R, U>): U;
-  map<U>(fn: (val: R) => U): ResRight<never, U>;
-  mapLeft<U>(fn: (left: L) => U): Either<never, R>;
-  mapRight<U>(fn: (right: R) => U): ResRight<never, U>;
-}
 
 export function Left<L, R>(val: L): ResLeft<L, R> {
   return {
@@ -93,7 +48,7 @@ export function Left<L, R>(val: L): ResLeft<L, R> {
     unwrapRightOrElse(fn: (left: L) => R): R {
       return fn(val);
     },
-    match<U>(matchObject: Match<L, never, U>): U {
+    match<U>(matchObject: MatchE<L, never, U>): U {
       return matchObject.left(val);
     },
     map<U>(fn: (val: L) => U): ResLeft<U, never> {
@@ -150,7 +105,7 @@ export function Right<L, R>(val: R): ResRight<L, R> {
     unwrapRightOrElse(_fn: (left: L) => R): R {
       return val;
     },
-    match<U>(matchObject: Match<never, R, U>): U {
+    match<U>(matchObject: MatchE<never, R, U>): U {
       return matchObject.right(val);
     },
     map<U>(fn: (val: R) => U): ResRight<never, U> {
