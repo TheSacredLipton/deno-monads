@@ -60,8 +60,6 @@ getIndex(values, 'z'); // Err("Value not found")
 
 ### `Either<L, R>`
 
-#### [Full documentation](lib/either)
-
 ```typescript
 import { Either } from "https://pax.deno.dev/TheSacredLipton/deno-monads";
 
