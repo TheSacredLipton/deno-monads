@@ -1,39 +1,7 @@
-<p align="center">
-  <a href="https://sniptt.com">
-    <img src=".github/assets/monads-social-cover.svg" alt="Monads Logo" />
-  </a>
-</p>
-
-<p align="right">
-  <i>If you use this repo, star it ✨</i>
-</p>
-
-***
-
-<p align="center">👻 <b>Option, Result, and Either types for JavaScript</b></p>
-
-<p align="center">
-  Inspired by <a href="https://doc.rust-lang.org/stable/std/option/" target="_blank">Rust</a>
-</p>
-
-<p align="center">
-  <b>Zero dependencies</b> 💪
-</p>
-
-***
-
-## Install
-
-### Node.js and the browser
-
-```sh
-npm install @sniptt/monads
-```
-
 ### Deno
 
 ```typescript
-import { Some } from 'https://deno.land/x/monads/mod.ts'
+import { Some } from "https://pax.deno.dev/TheSacredLipton/deno-monads";
 
 Some('air').unwrapOr('baloon') // "air"
 None.unwrapOr('baloon') // "baloon"
@@ -46,7 +14,7 @@ None.unwrapOr('baloon') // "baloon"
 #### [Full documentation](lib/option)
 
 ```typescript
-import { Option, Some, None } from '@sniptt/monads';
+import { Option, Some, None } from "https://pax.deno.dev/TheSacredLipton/deno-monads";
 
 const divide = (numerator: number, denominator: number): Option<number> => {
   if (denominator === 0) {
@@ -73,7 +41,7 @@ console.log(message); // "Result: 0.6666666666666666"
 #### [Full documentation](lib/result)
 
 ```typescript
-import { Result, Ok, Err } from "@sniptt/monads";
+import { Result, Ok, Err } from "https://pax.deno.dev/TheSacredLipton/deno-monads";
 
 const getIndex = (values: string[], value: string): Result<number, string> => {
   const index = values.indexOf(value);
@@ -97,7 +65,7 @@ getIndex(values, 'z'); // Err("Value not found")
 #### [Full documentation](lib/either)
 
 ```typescript
-import { Either } from '@sniptt/monads';
+import { Either } from "https://pax.deno.dev/TheSacredLipton/deno-monads";
 
 const getLabel = (uncertainDate: Either<Date, string>): string => {
   return uncertainDate.match({
